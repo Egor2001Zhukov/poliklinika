@@ -4,11 +4,11 @@ services:
     image: postgres:15-alpine
     restart: always
     env_file:
-      - ./backend/.env
+      - .env
     ports:
-      - "5432:5432"
+      - "54320:5432"
     expose:
-      - "5432"
+      - "54320"
     volumes:
       - db-data:/var/lib/postgresql/data:cached
 
@@ -20,9 +20,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: test_db
     ports:
-      - "54320:5432" # Use a different port to avoid conflicts with the main database
+      - "54321:5432" # Use a different port to avoid conflicts with the main database
     expose:
-      - "54320" # Exposing the different port for clarity
+      - "54321" # Exposing the different port for clarity
     volumes:
       - test-db-data:/var/lib/postgresql/data:cached
 
@@ -36,7 +36,7 @@ services:
       - ./backend:/backend/:cached
       - ./.docker/.ipython:/root/.ipython:cached
     env_file:
-      - ./backend/.env
+      - .env
     depends_on:
       - "postgres"
     ports:
