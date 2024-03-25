@@ -4,13 +4,13 @@ services:
     image: postgres:15-alpine
     restart: always
     env_file:
-      - ./server/.env
+      - ../server/.env
     ports:
       - "54320:5432"
     expose:
       - "54320"
     volumes:
-      - ./.db-data:/var/lib/postgresql/data:cached
+      - ../.db-data:/var/lib/postgresql/data:cached
 
   test-postgres:
     image: postgres:15-alpine
@@ -24,19 +24,31 @@ services:
     expose:
       - "54321" # Exposing the different port for clarity
     volumes:
-      - ./.test-db-data:/var/lib/postgresql/data:cached
+      - ../.test-db-data:/var/lib/postgresql/data:cached
 
   server:
     build:
-      context: server
+      context: ../server
+      dockerfile: Dockerfile
+    command: python app/main.py
+    tty: true
+    env_file:
+      - ../server/.env
+    depends_on:
+      - "postgres"
+    ports:
+      - "8000:8000"
+
+  tg_bot:
+    build:
+      context: .
       dockerfile: Dockerfile
     command: python app/main.py
     tty: true
     volumes:
-      - ./server:/server/:cached
-      - ./.docker/.ipython:/root/.ipython:cached
+      - . :/tg_bot/:cached
     env_file:
-      - ./server/.env
+      - ../server/.env
     depends_on:
       - "postgres"
     ports:

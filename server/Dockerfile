@@ -1,13 +1,15 @@
-  
-FROM python:3.11.4
+# Используйте образ с Go в качестве базового образа
+FROM golang:latest
 
-RUN mkdir /backend
-WORKDIR /backend
+# Установите рабочую директорию внутри контейнера
+WORKDIR /server
 
-RUN apt update && \
-    apt install -y postgresql-client
-
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Скопируйте все файлы Go из текущей директории внутрь контейнера
 COPY . .
+
+# Соберите приложение внутри контейнера
+RUN go mod download
+RUN go build -o server .
+
+# Запустите приложение при запуске контейнера
+CMD ["./server"]
