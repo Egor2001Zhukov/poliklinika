@@ -1,42 +1,37 @@
 version: "3.7"
 services:
-  postgres:
-    image: postgres:15-alpine
-    restart: always
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
     env_file:
       - .env
-    ports:
-      - "54320:5432"
-    expose:
-      - "54320"
     volumes:
-      - ../.db-data:/var/lib/postgresql/data:cached
-
-  test-postgres:
-    image: postgres:15-alpine
+      - ../.mongodb_data:/data/db
     restart: always
-    environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_db
+  
+  test-mongodb:
+    image: mongo:latest
+    container_name: test-mongodb
     ports:
-      - "54321:5432" # Use a different port to avoid conflicts with the main database
-    expose:
-      - "54321" # Exposing the different port for clarity
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: u_test
+      MONGO_INITDB_ROOT_PASSWORD: p_test
     volumes:
-      - ../.test-db-data:/var/lib/postgresql/data:cached
+      - ../.test_mongodb_data:/data/db
 
   server:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python app/main.py
     tty: true
     volumes:
-      - . :/server/:cached
+      - ./ :/server/:cached
     env_file:
       - .env
     depends_on:
-      - "postgres"
+      - "mongodb"
     ports:
-      - "8000:8000"
+      - "8080:8080"

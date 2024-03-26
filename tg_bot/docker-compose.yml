@@ -12,25 +12,11 @@ services:
     volumes:
       - ../.db-data:/var/lib/postgresql/data:cached
 
-  test-postgres:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: test_user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: test_db
-    ports:
-      - "54321:5432" # Use a different port to avoid conflicts with the main database
-    expose:
-      - "54321" # Exposing the different port for clarity
-    volumes:
-      - ../.test-db-data:/var/lib/postgresql/data:cached
-
   server:
     build:
       context: ../server
       dockerfile: Dockerfile
-    command: python app/main.py
+    command: ["./server"]
     tty: true
     env_file:
       - ../server/.env
