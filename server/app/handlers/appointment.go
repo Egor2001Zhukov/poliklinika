@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"site/app/models"
@@ -27,22 +28,7 @@ func (h *appointmentHandler) Register(router *httprouter.Router) {
 }
 
 func (h *appointmentHandler) GetList(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	queryParams := r.URL.Query()
-	filter := primitive.M{}
-	for key, values := range queryParams {
-		// Проверяем, есть ли у параметра несколько значений
-		if len(values) == 1 {
-			// Если значение параметра одно, добавляем его в фильтр
-			filter[key] = values[0]
-		} else {
-			// Если у параметра несколько значений, добавляем их как массив
-			filter[key] = values
-		}
-	}
-	fmt.Println(filter)
-
-	ctx := context.Background()
-	findAppointment, err := models.FindAppointments(ctx, filter)
+	findAppointment, err := models.FindAppointments(context.Background(), r.URL.Query())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -62,9 +48,8 @@ func (h *appointmentHandler) Get(w http.ResponseWriter, r *http.Request, params 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	filter := primitive.M{"_id": objectID}
 	ctx := context.Background()
-	findAppointment, err := models.FindAppointment(ctx, filter)
+	findAppointment, err := models.FindAppointment(ctx, objectID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -78,10 +63,8 @@ func (h *appointmentHandler) Get(w http.ResponseWriter, r *http.Request, params 
 }
 
 func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var appointment models.Appointment
-
+	var appointment bson.M
 	err := json.NewDecoder(r.Body).Decode(&appointment)
-	fmt.Println(&appointment)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
