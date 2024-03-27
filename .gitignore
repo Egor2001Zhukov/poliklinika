@@ -1,4 +1,5 @@
 .docker
 .idea
+.vscode
 .test_mongodb_data/
 .mongodb_data/
