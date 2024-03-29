@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
-	"site/app/models"
+	"server/app/models"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -70,7 +70,7 @@ func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params
 		return
 	}
 	ctx := context.Background()
-	insertAppointment, err := models.InsertAppointment(ctx, &appointment)
+	insertAppointment, err := models.InsertDocument(ctx, models.Appointment, &appointment)
 	if err != nil {
 		return
 	}

@@ -1,4 +1,4 @@
-module site
+module server
 
 go 1.19
 
