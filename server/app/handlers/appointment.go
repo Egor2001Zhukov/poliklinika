@@ -1,9 +1,15 @@
 package handlers
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
+	"server/app/models"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 type appointmentHandler struct {
@@ -22,22 +28,58 @@ func (h *appointmentHandler) Register(router *httprouter.Router) {
 }
 
 func (h *appointmentHandler) GetList(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	_, err := w.Write([]byte(fmt.Sprint("GetList Appointment")))
+	findAppointment, err := models.FindAppointments(context.Background(), r.URL.Query())
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+	appointmentJSON, err := json.Marshal(findAppointment)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	_, err = w.Write(appointmentJSON)
 }
 
 func (h *appointmentHandler) Get(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	id := params.ByName("id")
-	_, err := w.Write([]byte(fmt.Sprintf("Get %s Appointment", id)))
+	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+	ctx := context.Background()
+	findAppointment, err := models.FindAppointment(ctx, objectID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	appointmentJSON, err := json.Marshal(findAppointment)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	_, err = w.Write(appointmentJSON)
 }
 
 func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	_, err := w.Write([]byte(fmt.Sprint("Post Appointment")))
+	var appointment bson.M
+	err := json.NewDecoder(r.Body).Decode(&appointment)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	ctx := context.Background()
+	insertAppointment, err := models.InsertDocument(ctx, models.Appointment, &appointment)
+	if err != nil {
+		return
+	}
+	appointmentJSON, err := json.Marshal(insertAppointment)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	_, err = w.Write(appointmentJSON)
 	if err != nil {
 		panic(err)
 	}
