@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/graphql-go/graphql"
 	"github.com/julienschmidt/httprouter"
-	"io"
 	"net/http"
 	"server/app/models/appointment"
 )
@@ -22,12 +21,7 @@ func (h *appointmentHandler) Register(router *httprouter.Router) {
 }
 
 func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-
-		}
-	}(r.Body)
+	defer r.Body.Close()
 	// Создаем новый контекст для выполнения запроса GraphQL
 	ctx := context.Background()
 

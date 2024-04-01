@@ -1,9 +1,12 @@
 package appointment
 
 import (
+	"common_go/dbs/mongodb"
 	"context"
 	"fmt"
 	"github.com/graphql-go/graphql"
+	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 	"sync"
 )
 
@@ -36,6 +39,12 @@ var appointmentMutation = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				defer func(client *mongo.Client, ctx context.Context) {
+					err := client.Disconnect(ctx)
+					if err != nil {
+						log.Fatal(err)
+					}
+				}(mongodb.Client(), context.Background())
 				name := params.Args["name"].(string)
 				description := params.Args["description"].(string)
 				appointment := Appointment{
@@ -47,6 +56,7 @@ var appointmentMutation = graphql.NewObject(graphql.ObjectConfig{
 					return nil, err
 				}
 				return appointment, nil
+
 			},
 		},
 	},
@@ -63,6 +73,7 @@ var appointmentQuery = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+
 				id, ok := p.Args["id"].(string)
 				if !ok {
 					return nil, fmt.Errorf("ID пользователя не указан")

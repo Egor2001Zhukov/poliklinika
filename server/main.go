@@ -12,6 +12,13 @@ import (
 )
 
 func main() {
+	defer func(client *mongo.Client, ctx context.Context) {
+		err := client.Disconnect(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(mongodb.Client(), context.Background())
+
 	// create router
 	router := httprouter.New()
 
@@ -26,10 +33,4 @@ func main() {
 		log.Fatal(err)
 	} // Стартуем веб-сервер на порту 8080
 
-	defer func(client *mongo.Client, ctx context.Context) {
-		err := client.Disconnect(ctx)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(mongodb.Client(), context.Background())
 }

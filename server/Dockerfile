@@ -2,13 +2,15 @@
 FROM golang:latest
 
 # Устанавливаем рабочую директорию внутри контейнера
-WORKDIR /app
 
+WORKDIR /poliklinika
+
+COPY ./common_go common_go/
 # Копируем содержимое текущей директории внутрь контейнера
-COPY . .
+COPY ./server server/
 
 # Компилируем Go приложение
-RUN go build -o main .
+RUN cd server && go build -o server .
 
 # Запускаем приложение при старте контейнера
-CMD ["./main"]
+CMD ["./server/server"]
