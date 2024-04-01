@@ -1,6 +1,8 @@
 package settings
 
-import "auth/middlewares"
+import (
+	"auth/app/middlewares"
+)
 
 var commonMiddlewares = []middlewares.MiddlewareFunc{
 	LoggingMiddleware,

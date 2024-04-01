@@ -1,7 +1,9 @@
 package urls
 
-import "net/http"
-import "auth/handlers"
+import (
+	"auth/app/handlers"
+	"net/http"
+)
 
 var urls = map[string]func(http.ResponseWriter, *http.Request) interface{}{
 	"/hello": handlers.HelloHandler,
