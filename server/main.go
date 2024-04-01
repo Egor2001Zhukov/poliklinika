@@ -1,6 +1,7 @@
 package main
 
 import (
+	"common_go/dbs/mongodb"
 	"context"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
@@ -8,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"server/app/handlers"
-	mongodb "server/databases/mongodb"
 )
 
 func main() {

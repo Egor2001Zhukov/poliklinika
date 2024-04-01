@@ -29,7 +29,7 @@ async def cmd_start(patient_start_message: types.Message):
 @dp.message(Command('site'))  # создание команды
 async def site(message: types.Message):
     kb = keyboard.InlineKeyboardBuilder()
-    web_info = types.WebAppInfo(url='https://silchenkoofficial.github.io')
+    web_info = types.WebAppInfo(url='https://webapp-github-io-woad.vercel.app/webapp/65f98dca5511990017b0d9f2')
     button1 = types.InlineKeyboardButton(text="Веб", web_app=web_info)
     kb.add(button1)
     await message.answer("Текст с кнопкой", reply_markup=kb.as_markup())

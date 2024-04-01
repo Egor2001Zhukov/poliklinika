@@ -24,11 +24,9 @@ services:
 
   server:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: server/Dockerfile
     tty: true
-    volumes:
-      - ./ :/server/:cached
     env_file:
       - .env
     depends_on:

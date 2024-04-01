@@ -3,13 +3,11 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"server/app/models"
-
+	"github.com/graphql-go/graphql"
 	"github.com/julienschmidt/httprouter"
+	"io"
+	"net/http"
+	"server/app/models/appointment"
 )
 
 type appointmentHandler struct {
@@ -20,83 +18,40 @@ func NewAppointmentHandler() Handler {
 }
 
 func (h *appointmentHandler) Register(router *httprouter.Router) {
-	router.GET("/appointments", h.GetList)
-	router.GET("/appointments/:id", h.Get)
-	router.POST("/appointments", h.Post)
-	router.PUT("/appointments/:id", h.Put)
-	router.DELETE("/appointments/:id", h.Delete)
-}
-
-func (h *appointmentHandler) GetList(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	findAppointment, err := models.FindAppointments(context.Background(), r.URL.Query())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	appointmentJSON, err := json.Marshal(findAppointment)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	_, err = w.Write(appointmentJSON)
-}
-
-func (h *appointmentHandler) Get(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	id := params.ByName("id")
-	objectID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	ctx := context.Background()
-	findAppointment, err := models.FindAppointment(ctx, objectID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	appointmentJSON, err := json.Marshal(findAppointment)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	_, err = w.Write(appointmentJSON)
+	router.POST("/graphql", h.Post)
 }
 
 func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	var appointment bson.M
-	err := json.NewDecoder(r.Body).Decode(&appointment)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(r.Body)
+	// Создаем новый контекст для выполнения запроса GraphQL
 	ctx := context.Background()
-	insertAppointment, err := models.InsertDocument(ctx, models.Appointment, &appointment)
-	if err != nil {
+
+	// Распарсим тело запроса
+	var requestBody map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	appointmentJSON, err := json.Marshal(insertAppointment)
+	schema, err := appointment.GetAppointmentSchema()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Invalid schema", http.StatusInternalServerError)
 		return
 	}
-	_, err = w.Write(appointmentJSON)
+	// Выполним запрос GraphQL
+	result := graphql.Do(graphql.Params{
+		Schema:        schema,
+		RequestString: requestBody["query"].(string),
+		Context:       ctx,
+	})
+	// Преобразуем результат выполнения запроса в JSON и отправим клиенту
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
-		panic(err)
-	}
-}
-
-func (h *appointmentHandler) Put(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	id := params.ByName("id")
-	_, err := w.Write([]byte(fmt.Sprintf("Put %s Appointment", id)))
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (h *appointmentHandler) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	id := params.ByName("id")
-	_, err := w.Write([]byte(fmt.Sprintf("Delete %s Appointment", id)))
-	if err != nil {
-		panic(err)
+		return
 	}
 }

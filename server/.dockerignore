@@ -1,0 +1,8 @@
+../.mongodb_data
+../.test_mongodb_data
+../.idea
+../.vscode
+../admin_panel
+../auth
+../tg_bot
+../.docker

@@ -1,13 +1,9 @@
-module server
+module common_go
 
 go 1.19
 
-replace common_go => ../common_go
-
 require (
-	common_go v0.0.0-00010101000000-000000000000
-	github.com/graphql-go/graphql v0.8.1
-	github.com/julienschmidt/httprouter v1.3.0
+	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.14.0
 )
 
