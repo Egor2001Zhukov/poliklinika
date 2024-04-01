@@ -26,6 +26,15 @@ async def cmd_start(patient_start_message: types.Message):
                                            reply_markup=builder.as_markup(resize_keyboard=True))
 
 
+@dp.message(Command('site'))  # создание команды
+async def site(message: types.Message):
+    kb = keyboard.InlineKeyboardBuilder()
+    web_info = types.WebAppInfo(url='https://silchenkoofficial.github.io')
+    button1 = types.InlineKeyboardButton(text="Веб", web_app=web_info)
+    kb.add(button1)
+    await message.answer("Текст с кнопкой", reply_markup=kb.as_markup())
+
+
 @dp.message(F.content_type == types.ContentType.TEXT)
 async def message(patient_unknown_message: types.Message):
     print('patient_unknown_message')
