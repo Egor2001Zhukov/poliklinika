@@ -73,7 +73,6 @@ var appointmentQuery = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-
 				id, ok := p.Args["id"].(string)
 				if !ok {
 					return nil, fmt.Errorf("ID пользователя не указан")
@@ -89,16 +88,21 @@ var appointmentQuery = graphql.NewObject(graphql.ObjectConfig{
 	},
 })
 var (
-	Schema graphql.Schema
+	schema graphql.Schema
 	once   sync.Once
+
+	schema_err error
 )
 
-func GetAppointmentSchema() (Schema graphql.Schema, err error) {
+func GetAppointmentSchema() (*graphql.Schema, error) {
 	once.Do(func() {
-		Schema, err = graphql.NewSchema(graphql.SchemaConfig{
+		schema, schema_err = graphql.NewSchema(graphql.SchemaConfig{
 			Query:    appointmentQuery,
 			Mutation: appointmentMutation,
 		})
 	})
-	return
+	if schema_err != nil {
+		return nil, schema_err
+	}
+	return &schema, nil
 }

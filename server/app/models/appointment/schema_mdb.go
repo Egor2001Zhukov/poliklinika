@@ -3,7 +3,6 @@ package appointment
 import (
 	"common_go/dbs/mongodb"
 	"context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,12 +40,6 @@ func (a *Appointment) FindByID(ctx context.Context, id string) error {
 		return err
 	}
 	filter := primitive.M{"_id": objectID}
-	fmt.Println(filter)
 	err = a.GetCollection().FindOne(ctx, filter).Decode(a)
-	fmt.Println(a)
-	err = mongodb.Client().Disconnect(context.Background())
-	if err != nil {
-		return err
-	}
 	return err
 }

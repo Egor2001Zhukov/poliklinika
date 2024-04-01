@@ -21,7 +21,6 @@ func (h *appointmentHandler) Register(router *httprouter.Router) {
 }
 
 func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	defer r.Body.Close()
 	// Создаем новый контекст для выполнения запроса GraphQL
 	ctx := context.Background()
 
@@ -33,12 +32,12 @@ func (h *appointmentHandler) Post(w http.ResponseWriter, r *http.Request, params
 	}
 	schema, err := appointment.GetAppointmentSchema()
 	if err != nil {
-		http.Error(w, "Invalid schema", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// Выполним запрос GraphQL
 	result := graphql.Do(graphql.Params{
-		Schema:        schema,
+		Schema:        *schema,
 		RequestString: requestBody["query"].(string),
 		Context:       ctx,
 	})
