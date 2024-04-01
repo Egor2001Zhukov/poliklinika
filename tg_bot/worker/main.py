@@ -1,16 +1,15 @@
 import asyncio
 import logging
+import os
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-from utils.chat_gpt import send_request
-
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 # Объект бота
-bot = Bot(token="6131838941:AAHfe0ZSu1SKaYf8fmtA4SwB9KZjY0hyjqU", parse_mode="HTML")
+bot = Bot(token=os.getenv('WORKER_BOT_TOKEN'), parse_mode="HTML")
 # Диспетчер
 dp = Dispatcher()
 
@@ -30,7 +29,7 @@ async def cmd_special_buttons(message: types.Message):
 # Хэндлер на команду /start
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    await message.reply(str(message.chat.id))
+    await message.answer(f'Здравствуйте! Вы зашли в ')
 
 
 @dp.message()
