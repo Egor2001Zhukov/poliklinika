@@ -1,0 +1,37 @@
+version: "3.7"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    env_file:
+      - .env
+    volumes:
+      - ../.mongodb_data:/data/db
+    restart: always
+  
+  test-mongodb:
+    image: mongo:latest
+    container_name: test-mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: u_test
+      MONGO_INITDB_ROOT_PASSWORD: p_test
+    volumes:
+      - ../.test_mongodb_data:/data/db
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./ :/server/:cached
+    env_file:
+      - .env
+    depends_on:
+      - "mongodb"
+    ports:
+      - "8080:8080"
