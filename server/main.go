@@ -23,7 +23,6 @@ func main() {
 	router := httprouter.New()
 
 	// register handlers
-	handlers.NewUserHandler().Register(router)
 	handlers.NewAppointmentHandler().Register(router)
 
 	// start server

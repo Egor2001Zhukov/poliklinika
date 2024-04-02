@@ -48,7 +48,6 @@ var appointmentMutation = graphql.NewObject(graphql.ObjectConfig{
 				if err != nil {
 					return nil, err
 				}
-				fmt.Println(appointment)
 				return appointment, nil
 
 			},
@@ -79,7 +78,6 @@ var appointmentMutation = graphql.NewObject(graphql.ObjectConfig{
 				if err != nil {
 					return nil, err
 				}
-				fmt.Println(appointment)
 				return appointment, nil
 
 			},
@@ -104,7 +102,6 @@ var appointmentQuery = graphql.NewObject(graphql.ObjectConfig{
 				}
 				appointment := &Appointment{}
 				err := appointment.FindByID(context.Background(), id)
-				fmt.Println(appointment)
 				if err != nil {
 					return nil, err
 				}
