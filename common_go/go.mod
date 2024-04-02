@@ -3,7 +3,7 @@ module common_go
 go 1.19
 
 require (
-	github.com/joho/godotenv v1.5.1
+	github.com/graphql-go/graphql v0.8.1
 	go.mongodb.org/mongo-driver v1.14.0
 )
 

@@ -1,20 +1,19 @@
 package appointment
 
 import (
-	"common_go/dbs/mongodb"
+	"common_go/gql"
 	"context"
 	"fmt"
 	"github.com/graphql-go/graphql"
-	"go.mongodb.org/mongo-driver/mongo"
-	"log"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"sync"
 )
 
 var appointmentType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Appointment",
+	Name: "appointment",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
-			Type: graphql.String,
+			Type: gql.ObjectID,
 		},
 		"name": &graphql.Field{
 			Type: graphql.String,
@@ -39,12 +38,6 @@ var appointmentMutation = graphql.NewObject(graphql.ObjectConfig{
 				},
 			},
 			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-				defer func(client *mongo.Client, ctx context.Context) {
-					err := client.Disconnect(ctx)
-					if err != nil {
-						log.Fatal(err)
-					}
-				}(mongodb.Client(), context.Background())
 				name := params.Args["name"].(string)
 				description := params.Args["description"].(string)
 				appointment := Appointment{
@@ -55,6 +48,38 @@ var appointmentMutation = graphql.NewObject(graphql.ObjectConfig{
 				if err != nil {
 					return nil, err
 				}
+				fmt.Println(appointment)
+				return appointment, nil
+
+			},
+		},
+		"updateAppointment": &graphql.Field{
+			Type: appointmentType,
+			Args: graphql.FieldConfigArgument{
+				"id": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(gql.ObjectID),
+				},
+				"name": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+				"description": &graphql.ArgumentConfig{
+					Type: graphql.NewNonNull(graphql.String),
+				},
+			},
+			Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+				id := params.Args["id"].(primitive.ObjectID)
+				name := params.Args["name"].(string)
+				description := params.Args["description"].(string)
+				appointment := Appointment{
+					ID:          id,
+					Name:        name,
+					Description: description,
+				}
+				err := appointment.Save(context.Background())
+				if err != nil {
+					return nil, err
+				}
+				fmt.Println(appointment)
 				return appointment, nil
 
 			},
@@ -79,6 +104,7 @@ var appointmentQuery = graphql.NewObject(graphql.ObjectConfig{
 				}
 				appointment := &Appointment{}
 				err := appointment.FindByID(context.Background(), id)
+				fmt.Println(appointment)
 				if err != nil {
 					return nil, err
 				}
