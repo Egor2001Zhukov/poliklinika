@@ -91,18 +91,18 @@ var (
 	schema graphql.Schema
 	once   sync.Once
 
-	schema_err error
+	schemaErr error
 )
 
 func GetAppointmentSchema() (*graphql.Schema, error) {
 	once.Do(func() {
-		schema, schema_err = graphql.NewSchema(graphql.SchemaConfig{
+		schema, schemaErr = graphql.NewSchema(graphql.SchemaConfig{
 			Query:    appointmentQuery,
 			Mutation: appointmentMutation,
 		})
 	})
-	if schema_err != nil {
-		return nil, schema_err
+	if schemaErr != nil {
+		return nil, schemaErr
 	}
 	return &schema, nil
 }
