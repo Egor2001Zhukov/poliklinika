@@ -4,8 +4,7 @@ import (
 	"common_go/middlewares"
 )
 
-var commonMiddlewares = []middlewares.MiddlewareFunc{
-	middlewares.ErrorHandlerMiddleware,
-	middlewares.ErrorHandlerMiddleware,
+var CommonMiddlewares = []middlewares.MiddlewareFunc{
 	middlewares.LoggerMiddleware,
+	middlewares.ErrorHandlerMiddleware,
 }

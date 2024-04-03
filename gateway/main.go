@@ -1,20 +1,27 @@
 package main
 
 import (
+	"auth/app/settings"
+	"auth/app/urls"
 	"fmt"
 	"net/http"
 )
 
-func getResponse(w http.ResponseWriter, r *http.Request) {
-	// Получаем путь запроса
-	path := r.URL.Path
+func processRequest(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.RequestURI)
+	f, ok := urls.Urls[r.RequestURI]
+	if !ok {
+		http.Error(w, "NotFound", http.StatusNotFound)
+		return
+	}
+	handler := http.HandlerFunc(f)
+	// Применяем middleware к обработчику
+	for _, middleware := range settings.CommonMiddlewares {
+		handler = middleware(handler)
+	}
 
-	// Ваша логика для получения ответа на запрос
-	response := fmt.Sprintf("Response for path: %s", path)
-
-	// Отправляем ответ клиенту
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(response))
+	// Обработка запроса
+	handler.ServeHTTP(w, r)
 }
 
 func main() {
@@ -23,7 +30,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Обработка всех запросов с помощью одного обработчика
-	mux.HandleFunc("/", getResponse)
+	mux.HandleFunc("/", processRequest)
 
 	// Запускаем сервер
 	fmt.Println("Server started at http://localhost:8080")

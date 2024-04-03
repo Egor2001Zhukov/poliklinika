@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-var urls = map[string]func(http.ResponseWriter, *http.Request) interface{}{
+var Urls = map[string]func(http.ResponseWriter, *http.Request){
 	"/hello": handlers.HelloHandler,
 }

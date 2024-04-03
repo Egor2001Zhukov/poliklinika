@@ -2,6 +2,6 @@ package handlers
 
 import "net/http"
 
-func HelloHandler(http.ResponseWriter, *http.Request) interface{} {
-	return "hello"
+func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("hello"))
 }
