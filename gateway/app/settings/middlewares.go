@@ -5,6 +5,7 @@ import (
 )
 
 var CommonMiddlewares = []middlewares.MiddlewareFunc{
-	middlewares.LoggerMiddleware,
-	middlewares.ErrorHandlerMiddleware,
+	middlewares.AuthenticationMiddleware,
+	middlewares.ErrorHandlerMiddleware, // После должен быть обработчик ошибок
+	//middlewares.LoggerMiddleware,       // Первым должен быть логер потому что он подменяет записывающую функцию рекордером
 }

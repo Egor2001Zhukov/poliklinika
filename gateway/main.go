@@ -5,34 +5,29 @@ import (
 	"auth/app/urls"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
-func processRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.RequestURI)
-	f, ok := urls.Urls[r.RequestURI]
-	if !ok {
-		http.Error(w, "NotFound", http.StatusNotFound)
-		return
-	}
-	handler := http.HandlerFunc(f)
-	// Применяем middleware к обработчику
-	for _, middleware := range settings.CommonMiddlewares {
-		handler = middleware(handler)
-	}
+func mainHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		microService := strings.Split(r.URL.Path, "/")[1]
+		f, ok := urls.MicroServices[microService]
+		if !ok {
+			http.Error(w, "ServiceNotFound", http.StatusNotFound)
+			return
+		}
+		f(w, r)
+	})
 
-	// Обработка запроса
-	handler.ServeHTTP(w, r)
 }
 
 func main() {
+	handler := mainHandler()
+	for _, middleware := range settings.CommonMiddlewares {
+		handler = middleware(handler)
+	}
+	http.Handle("/", handler)
 
-	// Создаем маршрутизатор
-	mux := http.NewServeMux()
-
-	// Обработка всех запросов с помощью одного обработчика
-	mux.HandleFunc("/", processRequest)
-
-	// Запускаем сервер
 	fmt.Println("Server started at http://localhost:8080")
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":8080", nil)
 }

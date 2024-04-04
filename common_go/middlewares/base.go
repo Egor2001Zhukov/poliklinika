@@ -2,4 +2,4 @@ package middlewares
 
 import "net/http"
 
-type MiddlewareFunc func(handlerFunc http.HandlerFunc) http.HandlerFunc
+type MiddlewareFunc func(handler http.Handler) http.Handler

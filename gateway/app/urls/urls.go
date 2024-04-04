@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
-var Urls = map[string]func(http.ResponseWriter, *http.Request){
-	"/hello": handlers.HelloHandler,
+var MicroServices = map[string]func(w http.ResponseWriter, r *http.Request){
+	"gateway": handlers.HelloHandler,
+	"auth":    handlers.HelloHandler,
 }
