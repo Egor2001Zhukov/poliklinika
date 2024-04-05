@@ -1,10 +1,10 @@
 package main
 
 import (
-	"auth/app/settings"
-	"auth/app/urls"
 	"fmt"
 	"net/http"
+	"poliklinika_gateway/app/settings"
+	"poliklinika_gateway/app/urls"
 	"strings"
 )
 
@@ -18,7 +18,6 @@ func mainHandler() http.Handler {
 		}
 		f(w, r)
 	})
-
 }
 
 func main() {

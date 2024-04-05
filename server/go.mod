@@ -1,6 +1,6 @@
-module server
+module poliklinika_server
 
-go 1.19
+go 1.22rc2
 
 replace common_go => ../common_go
 
