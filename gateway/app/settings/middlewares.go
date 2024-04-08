@@ -1,6 +1,6 @@
 package settings
 
-import "github.com/zhumorist/common_go/middlewares"
+import "common_go/web/middlewares"
 
 var CommonMiddlewares = []middlewares.MiddlewareFunc{
 	middlewares.AuthenticationMiddleware(PublicServices, LoginEndpoint, true),

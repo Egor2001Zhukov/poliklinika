@@ -1,8 +1,8 @@
 package urls
 
 import (
-	"auth/app/handlers"
 	"net/http"
+	"poliklinika_gateway/app/handlers"
 )
 
 var MicroServices = map[string]func(w http.ResponseWriter, r *http.Request){

@@ -1,6 +1,6 @@
 module poliklinika_auth
 
-go 1.22rc2
+go 1.19
 
 replace common_go => ../common_go
 

@@ -1,7 +1,7 @@
 package settings
 
 import (
-	"common_go/middlewares"
+	"common_go/web/middlewares"
 )
 
 var commonMiddlewares = []middlewares.MiddlewareFunc{
