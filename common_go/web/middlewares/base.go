@@ -1,5 +1,7 @@
 package middlewares
 
-import "net/http"
+import (
+	"common_go/web/handlers"
+)
 
-type MiddlewareFunc func(handler http.Handler) http.Handler
+type MiddlewareFunc func(handlers.Handler) handlers.Handler

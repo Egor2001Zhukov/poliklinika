@@ -1,11 +1,12 @@
 package urls
 
 import (
-	"net/http"
+	"common_go/web/request"
+	"common_go/web/response"
 	"poliklinika_gateway/app/handlers"
 )
 
-var MicroServices = map[string]func(w http.ResponseWriter, r *http.Request){
-	"gateway": handlers.HelloHandler,
-	"auth":    handlers.HelloHandler,
+var MicroServices = map[string]func(req *request.Request, res *response.Response){
+	"server": handlers.HelloHandler,
+	"auth":   handlers.HelloHandler,
 }

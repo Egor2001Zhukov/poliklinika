@@ -6,3 +6,5 @@ var PublicServices = []string{
 var LoginEndpoint = "auth/login"
 
 var RegisterEndpoint = "auth/register"
+
+var isDev = true

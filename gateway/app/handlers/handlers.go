@@ -1,8 +1,12 @@
 package handlers
 
-import "net/http"
+import (
+	"common_go/web/request"
+	"common_go/web/response"
+)
 
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "text/plain; charset=utf-16")
-	w.Write([]byte("hello"))
+func HelloHandler(req *request.Request, res *response.Response) {
+	res.SetHeader("Content-Type", []string{"text/plain; charset=utf-16"})
+	res.WriteBody([]byte("hello"))
+	res.SetStatusCode(201)
 }
