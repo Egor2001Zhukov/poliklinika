@@ -44,7 +44,7 @@ func ErrorHandlerMiddleware(isDev bool) MiddlewareFunc {
 	}
 }
 
-func AuthenticationMiddleware(publicEndpoints []string, redirectEndpoint string, withNext bool) MiddlewareFunc {
+func AuthenticationMiddleware(publicEndpoints []string, redirectURL string, withNext bool) MiddlewareFunc {
 	return func(next handlers.Handler) handlers.Handler {
 		return handlers.HandlerFunc(func(req *request.Request, res *response.Response) {
 			_, err := req.Cookie("session")
@@ -63,7 +63,7 @@ func AuthenticationMiddleware(publicEndpoints []string, redirectEndpoint string,
 						nextEndpoint = "?next=" + url.QueryEscape(currentURL)
 					}
 
-					redirectURL := "/" + redirectEndpoint + "/" + nextEndpoint
+					redirectURL := redirectURL + nextEndpoint
 					res.Redirect(redirectURL, http.StatusFound)
 					return
 				}

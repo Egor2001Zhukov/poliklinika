@@ -3,8 +3,8 @@ package settings
 var PublicServices = []string{
 	"auth", "handbook",
 }
-var LoginEndpoint = "auth/login"
+var NotAuthURL = "http://localhost:8081/auth/login"
 
-var RegisterEndpoint = "auth/register"
+var ServerURL = "http://localhost:8080"
 
 var isDev = true

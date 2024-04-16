@@ -7,6 +7,6 @@ import (
 )
 
 var MicroServices = map[string]func(req *request.Request, res *response.Response){
-	"server": handlers.HelloHandler,
-	"auth":   handlers.HelloHandler,
+	"server": handlers.ServerHandler,
+	"auth":   handlers.AuthHandler,
 }

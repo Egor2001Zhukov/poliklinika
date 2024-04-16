@@ -2,13 +2,14 @@ package request
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 )
 
 type Request struct {
 	Path       string
 	Method     string
-	Body       interface{}
+	Body       io.ReadCloser
 	Headers    map[string][]string
 	Cookies    []*http.Cookie
 	QueryParam map[string][]string
